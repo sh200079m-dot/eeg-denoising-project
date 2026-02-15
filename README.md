@@ -9,10 +9,6 @@ This project implements an adaptive channel-wise thresholding method for EEG sig
 **Subjects used:** sub-001 (Parkinson patient), sub-101 (Healthy control)  
 **Specifications:** 63 channels, 500 Hz sampling rate
 
-## 📈 Key Results
-- ✅ Adaptive method outperformed baseline in **75%** of test cases
-- ✅ Best improvement: **+0.283 dB SNR** (healthy subject, db4 wavelet)
-
 ## 📁 Repository Structure
 - `src/`: Python source codes
 - `notebooks/`: Jupyter exploration notebook
