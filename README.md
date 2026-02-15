@@ -5,7 +5,7 @@ This project implements an adaptive channel-wise thresholding method for EEG sig
 
 ## 📊 Dataset
 **Source:** "Rest eyes open – Parkinson's Disease 64-Channel" from OpenNeuro  
-🔗 [Dataset Link]([https://openneuro.org/datasets/ds004584/versions/1.0.0])  
+🔗 [Dataset Link]((https://openneuro.org/datasets/ds004584/versions/1.0.0)  )
 **Subjects used:** sub-001 (Parkinson patient), sub-101 (Healthy control)  
 **Specifications:** 63 channels, 500 Hz sampling rate
 
