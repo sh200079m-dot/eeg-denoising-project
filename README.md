@@ -19,7 +19,7 @@ This project implements an **adaptive channel-wise thresholding method** for EEG
 ## 👩‍💻 Author
 Shaghayegh Masoudian 
 course: Advanced Digital Signal Processing (ADSP)
-📁Project Structure
+## 📁Project Structure
 EEG_Project/
 ├── data/                    # EEG dataset (not included in repo)
 │   ├── sub-001/
