@@ -26,7 +26,7 @@ subjects = ["sub-001", "sub-101"]
 wavelets = ["db4", "dmey"]
 snr_db = 10
 baseline_drift_ratio = 0.05
-duration_plot = 2  # 2 seconds for better visualization
+duration_plot = 2  # 2 seconds for visualization (still plot 2 seconds)
 channel_to_plot = 0  # First channel
 
 
@@ -59,23 +59,26 @@ def plot_comparison(subject, wavelet):
     adaptive = adaptive_wavelet_denoise(noisy, wavelet=wavelet)
     
     # ----------------------------
-    # Prepare Plot Data
+    # Calculate SNR on FULL signal (all channels, all 10 seconds)
+    # ----------------------------
+    def calc_snr_full(clean_sig, denoised_sig):
+        noise = clean_sig - denoised_sig
+        snr = 10 * np.log10(np.mean(clean_sig**2) / np.mean(noise**2))
+        return snr
+    
+    snr_noisy_full = calc_snr_full(clean, noisy)
+    snr_baseline_full = calc_snr_full(clean, baseline)
+    snr_adaptive_full = calc_snr_full(clean, adaptive)
+    
+    print(f"  Full SNR - Noisy: {snr_noisy_full:.3f} dB")
+    print(f"  Full SNR - Baseline: {snr_baseline_full:.3f} dB")
+    print(f"  Full SNR - Adaptive: {snr_adaptive_full:.3f} dB")
+    
+    # ----------------------------
+    # Prepare Plot Data (only first 2 seconds for visualization)
     # ----------------------------
     samples = slice(0, int(duration_plot * sfreq))
     time = np.arange(samples.stop) / sfreq
-    
-    # Calculate SNR for legend
-    def calc_snr(clean_sig, denoised_sig):
-        noise = clean_sig - denoised_sig
-        snr = 10 * np.log10(np.mean(clean_sig**2) / np.mean(noise**2))
-        return f"{snr:.2f} dB"
-    
-    snr_noisy = calc_snr(clean[channel_to_plot, samples], 
-                         noisy[channel_to_plot, samples])
-    snr_baseline = calc_snr(clean[channel_to_plot, samples], 
-                            baseline[channel_to_plot, samples])
-    snr_adaptive = calc_snr(clean[channel_to_plot, samples], 
-                            adaptive[channel_to_plot, samples])
     
     # ----------------------------
     # Create Plot
@@ -85,17 +88,17 @@ def plot_comparison(subject, wavelet):
     # Top plot: All signals together
     ax1 = axes[0]
     ax1.plot(time, noisy[channel_to_plot, samples], 
-             label=f'Noisy ({snr_noisy})', alpha=0.5, color='red', linewidth=1)
+             label=f'Noisy (Full SNR: {snr_noisy_full:.2f} dB)', alpha=0.5, color='red', linewidth=1)
     ax1.plot(time, baseline[channel_to_plot, samples], 
-             label=f'Baseline Rigrsure ({snr_baseline})', color='blue', linewidth=1.5)
+             label=f'Baseline Rigrsure (Full SNR: {snr_baseline_full:.2f} dB)', color='blue', linewidth=1.5)
     ax1.plot(time, adaptive[channel_to_plot, samples], 
-             label=f'Proposed Adaptive ({snr_adaptive})', color='green', linewidth=2)
+             label=f'Proposed Adaptive (Full SNR: {snr_adaptive_full:.2f} dB)', color='green', linewidth=2)
     ax1.plot(time, clean[channel_to_plot, samples], 
              label='Clean Reference', linestyle='--', color='black', linewidth=1)
     
     ax1.set_xlabel('Time (s)')
     ax1.set_ylabel('Amplitude (μV)')
-    ax1.set_title(f'EEG Denoising Comparison - {subject} (Wavelet: {wavelet}) - Channel 1')
+    ax1.set_title(f'EEG Denoising Comparison - {subject} (Wavelet: {wavelet}) - Channel 1 (First {duration_plot}s)')
     ax1.legend(loc='upper right')
     ax1.grid(True, alpha=0.3)
     
@@ -117,21 +120,21 @@ def plot_comparison(subject, wavelet):
     ax2.set_title('Signals with vertical offset for better comparison')
     ax2.legend(loc='upper right')
     ax2.grid(True, alpha=0.3)
-    ax2.set_yticks([])  # Hide y-ticks since values are offset
+    ax2.set_yticks([])
     
     plt.tight_layout()
     
     # ----------------------------
     # Save Plot
     # ----------------------------
-    filename = f"denoising_comparison_{subject}_{wavelet}.png"
+    filename = f"denoising_comparison_{subject}_{wavelet}_fullsnr.png"
     plt.savefig(filename, dpi=150, bbox_inches='tight')
     print(f"Saved: {filename}")
     plt.close(fig)
 
 
 # ============================
-# Create Summary Bar Chart (FIXED VERSION)
+# Create Summary Bar Chart
 # ============================
 def create_summary_chart():
     """Create bar chart comparing SNR improvements"""
@@ -231,6 +234,6 @@ if __name__ == "__main__":
     print("Files created:")
     for subject in subjects:
         for wavelet in wavelets:
-            print(f"  - denoising_comparison_{subject}_{wavelet}.png")
+            print(f"  - denoising_comparison_{subject}_{wavelet}_fullsnr.png")
     print("  - snr_comparison_summary.png")
     print("=" * 60)
