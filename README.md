@@ -13,7 +13,8 @@ This project implements an **adaptive channel-wise thresholding method** for EEG
 ## Repository Structure
 - `src/`: Python source codes
 - `notebooks/`: Jupyter exploration notebook
-- `*.png`: Result figures
+- `*.png`: Result figures(For reference, the original comparison plots (without _fullsnr in their names) show results for Channel 1 only and were used during initial development, while the _fullsnr versions represent the final results with global SNR calculation.)
+- 
 
 ## 👩‍💻 Author
 Shaghayegh Masoudian 
